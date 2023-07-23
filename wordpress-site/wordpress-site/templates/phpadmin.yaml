@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  {{ .Release.Name}}-phpadmin-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+        - name: phpmyadmin
+          image: phpmyadmin/phpmyadmin:{{ .Values.phpadmin.image.tag | default "latest"}}
+          env:
+            - name: PMA_HOST
+              value: {{.Values.mysql.svc.name | default "wordpress-mysql"}}
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-pass
+                  key: password
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.phpadmin.svc.name | default "phpmyadmin-svc"}} 
+spec:
+  selector:
+    app: phpmyadmin
+  type: {{ .Values.phpadmin.svc.type | default "ClusterIP" }}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
