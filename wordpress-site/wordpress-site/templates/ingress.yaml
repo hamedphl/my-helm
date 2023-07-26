@@ -3,32 +3,26 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name}}-wordpress-ingress
 spec:
+  tls:
+  - hosts:
+    - {{.Values.ingress.hostname | default "babak-ghiyasvand-nl-rg3.maxtld.dev"}}
+    secretName: letsencrypt
   ingressClassName: {{ .Values.ingress.classname }}
   rules:
-    - host: {{.Values.wordpress.ingress.host | default "wordpress.local.com"}}
+    - host: {{.Values.ingress.hostname | default "babak-ghiyasvand-nl-rg3.maxtld.dev"}}
       http:
         paths:
-          - path: /
+          - path: /wordpress
             pathType: Prefix
             backend:
               service:
                 name: {{.Values.wordpress.svc.name | default "wordpress"}}
                 port:
                   number: 80
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ .Release.Name}}-phpadmin-ingress
-spec:
-  ingressClassName: {{ .Values.ingress.classname }}
-  rules:
-    - host: {{.Values.phpadmin.ingress.host | default "phpadmin.local.com"}} 
+    - host: {{.Values.ingress.hostname | default "babak-ghiyasvand-nl-rg3.maxtld.dev"}} 
       http:
         paths:
-          - path: /
+          - path: /dbadmin
             pathType: Prefix
             backend:
               service:

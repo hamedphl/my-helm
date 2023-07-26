@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: phpmyadmin
-          image: phpmyadmin/phpmyadmin:{{ .Values.phpadmin.image.tag | default "latest"}}
+          image: {{.Values.registery | default "docker.io"}}/{{ .Values.phpadmin.image.repository | default "phpmyadmin/phpmyadmin"}}:{{ .Values.phpadmin.image.tag | default "latest"}}
           env:
             - name: PMA_HOST
               value: {{.Values.mysql.svc.name | default "wordpress-mysql"}}

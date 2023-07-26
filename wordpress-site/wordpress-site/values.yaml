@@ -1,9 +1,12 @@
+registery: 
 ingress:
-  classname: nginx-ingress  
+  classname: nginx-ingress 
+  hostname: 
 
 wordpress:
-  image:  
-    tag:  # default wordpress:6.2.1-apache
+  image:
+    repository: devopshttp/wordpress
+    tag: v1 # default wordpress:6.2.1-apache
   pvc:
     name:  #Set wordpress pvc name
     size:  #Set wordpress storage size default is 2Gi
@@ -30,7 +33,8 @@ mysql:
 
 phpadmin:
   image:
-    tag: 
+    repository: devopshttp/phpadmin
+    tag: v1
   svc:
     name:
     type:
