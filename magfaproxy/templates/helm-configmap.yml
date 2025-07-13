@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: magfaproxy-cm
+data:
+{{ toYaml .Values.config | indent 2 }}
+{{ toYaml .Capabilities
+200m }}

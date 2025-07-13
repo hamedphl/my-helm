@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: mysql-pass
-  namespace: wp
-type: Opaque
-data:
-#  username: {{.Values.mysql.username | default "mysql-user" | b64enc  }}  # Replace with your base64-encoded username
-  password: {{.Values.mysql.root_password | default "P@ssw0rd" | b64enc  }} # Replace with your base64-encoded password

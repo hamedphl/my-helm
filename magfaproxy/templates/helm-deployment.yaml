@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: magfaproxy
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: magfaproxy
+  template:
+    metadata:
+      labels:
+        app: magfaproxy
+    spec:
+      nodeSelector: 
+{{ toYaml .Values.nodeSelector | indent 8}}
+      containers:
+      - name: magfaproxy
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+           runAsUser: 101
+           runAsGroup: 101
+           allowPrivilegeEscalation: false
+        volumeMounts:
+        - mountPath: /etc/nginx/
+          name: config
+          readOnly: true
+        resources:
+          limits:
+            memory: "200Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+      securityContext:
+        fsGroup: 101
+      volumes:
+        - name: config
+          configMap:
+            name: magfaproxy-cm

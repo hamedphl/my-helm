@@ -1,0 +1,59 @@
+# Default values for magfaproxy.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository:  harbor.agri-bank.com/offline/docker.io/nginxinc/nginx-unprivileged
+  pullPolicy: IfNotPresent
+  tag: "1.29.0-perl"
+  
+nodeSelector:
+    sms_access: "true"
+service:
+  nodePort: 31300
+
+config:
+  nginx.conf: |
+      worker_processes  auto;
+      error_log         /dev/stderr;
+      pid               "/tmp/nginx.pid";
+      events {
+        worker_connections  1024;
+      }
+      http {
+        log_format json_combined escape=json
+        '{'
+          '"time_local": "$time_local",'
+          '"remote_addr": "$remote_addr",'
+          '"http_x_forwarded_for": "$http_x_forwarded_for",'
+          '"remote_user": "$remote_user",'
+          '"http_user_agent": "$http_user_agent"'
+          '"request": "$request",'
+          '"status": "$status",'
+          '"body_bytes_sent": "$body_bytes_sent",'
+          '"request_time": "$request_time",'
+          '"http_referrer": "$http_referer",'
+          '"rt": "$request_time",'
+          '"uct": "$upstream_connect_time",'
+          '"uht": "$upstream_header_time",'
+          '"urt": "$upstream_response_time"'
+        '}';
+
+        access_log   /dev/stdout  json_combined;
+        server {
+          listen 8080;
+          
+          location / {
+            proxy_pass https://bki.ir;
+          }
+          location /stub_status {
+              stub_status;
+              access_log   off;
+            }
+
+      }
+
+      }
+      # '"request_body": "$request_body"'

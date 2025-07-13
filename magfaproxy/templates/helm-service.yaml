@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "magfaproxy.fullname" . }}
+  labels:
+    {{- include "magfaproxy.labels" . | nindent 4 }}
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: {{ .Values.service.nodePort }}
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: magfaproxy
+  externalTrafficPolicy: Local
+ 
